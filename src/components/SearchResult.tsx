@@ -1,4 +1,3 @@
-import { render } from "@testing-library/react";
 import React, { useEffect, useState } from "react";
 import { Hit } from "../interfaces/SearchInterfaces";
 
@@ -28,7 +27,7 @@ function SearchResult(props: SearchResultProps) {
   };
 
   const renderStory = () => {
-    if (storyText && storyText.length <= 1000) return;
+    if (!storyText || (storyText && storyText.length <= 1000)) return;
 
     if (modifiedStory && modifiedStory.length > 1000) {
       return (
@@ -55,12 +54,17 @@ function SearchResult(props: SearchResultProps) {
             : "No story text available. Please check out the link."}
         </p>
         {renderStory()}
-        <footer className="flex flex-row gap-4">
+        <footer className="flex flex-row gap-4 flex-wrap">
           <p>
             Posted on {date} by {author}
           </p>
           <p className="">Votes: {points}</p>
-          <a href={url} target="_blank" rel="noreferrer">
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="break-words"
+          >
             {url}
           </a>
         </footer>

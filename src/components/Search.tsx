@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import SearchResults from "./SearchResults";
 import { Hit } from "../interfaces/SearchInterfaces";
 import { HistoryItem } from "../interfaces/HistoryInterfaces";
@@ -18,11 +18,11 @@ function Search(props: SearchProps) {
 
   const QUERY_URL = "https://hn.algolia.com/api/v1/search?tags=story&query=";
 
-  const [queryVal, setQueryVal] = useState("");
-  const [error, setError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {}, []);
+  const [queryVal, setQueryVal] = useState<string>("");
+  const [error, setError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [pagesCount, setPagesCount] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
 
   function request<TResponse>(
     url: string,
@@ -35,22 +35,37 @@ function Search(props: SearchProps) {
 
   const onInputSubmitted = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key !== "Enter") return;
-    setResults([]);
     setError(false);
     setIsLoading(true);
-    setQueryVal("");
+    setCurrentPage(0);
+    setPagesCount(0);
     const hDate = new Date();
     const hist: HistoryItem = {
       query: queryVal,
       date: hDate.toDateString(),
     };
     setHistory((prev) => [...prev, hist]);
-    request<Response>(`${QUERY_URL}${queryVal}`, {
+    getHNResults(undefined);
+  };
+
+  const getHNResults = (page: number | undefined) => {
+    setResults([]);
+    setError(false);
+    setIsLoading(true);
+    let queryUrl = "";
+    if (page) {
+      queryUrl = `${QUERY_URL}${queryVal}&page=${page}`;
+    } else {
+      queryUrl = `${QUERY_URL}${queryVal}`;
+    }
+    request<Response>(queryUrl, {
       method: "GET",
       mode: "cors",
     })
-      .then((response) => {
+      .then((response: any) => {
         setIsLoading(false);
+        setPagesCount(response.nbPages);
+        setCurrentPage(response.page);
         response.hits.forEach((item: any) => {
           const date = new Date(item.created_at);
           let ci: Hit = {
@@ -69,6 +84,24 @@ function Search(props: SearchProps) {
         setError(true);
         setIsLoading(false);
       });
+  };
+
+  const prevPage = () => {
+    if (currentPage - 1 >= 0) {
+      setCurrentPage((prev) => {
+        getHNResults(prev - 1);
+        return prev - 1;
+      });
+    }
+  };
+
+  const nextPage = () => {
+    if (currentPage + 1 <= pagesCount - 1) {
+      setCurrentPage((prev) => {
+        getHNResults(prev + 1);
+        return prev + 1;
+      });
+    }
   };
 
   return (
@@ -96,6 +129,14 @@ function Search(props: SearchProps) {
         </span>
       ) : null}
       {results.length > 0 ? <SearchResults results={results} /> : null}
+
+      {results.length > 0 ? (
+        <div className="cursor-pointer">
+          <span onClick={prevPage}>&lt;</span>
+          <span className="px-4 underline">{currentPage + 1}</span>
+          <span onClick={nextPage}>&gt;</span>
+        </div>
+      ) : null}
     </div>
   );
 }
