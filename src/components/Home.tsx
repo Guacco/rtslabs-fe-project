@@ -8,7 +8,6 @@ function Home() {
   return (
     <div className="bg-orange-500 h-screen text-white">
       <Nav />
-      <h1 className="text-3xl">Home Page</h1>
       <Routes>
         <Route index element={<Search />} />
         <Route path="/history" element={<History />} />
