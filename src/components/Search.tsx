@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from "react";
 import SearchResults from "./SearchResults";
 import { Hit } from "../interfaces/SearchInterfaces";
+import { HistoryItem } from "../interfaces/HistoryInterfaces";
 
-function Search() {
+interface SearchProps {
+  results: Hit[];
+  setResults: React.Dispatch<React.SetStateAction<Hit[]>>;
+  setHistory: React.Dispatch<React.SetStateAction<HistoryItem[]>>;
+}
+
+function Search(props: SearchProps) {
   type Response = {
     hits: [];
   };
+
+  const { results, setResults, setHistory } = props;
 
   const QUERY_URL = "https://hn.algolia.com/api/v1/search?tags=story&query=";
 
   const [queryVal, setQueryVal] = useState("");
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<Hit[]>([]);
 
   useEffect(() => {}, []);
 
@@ -31,6 +39,12 @@ function Search() {
     setError(false);
     setIsLoading(true);
     setQueryVal("");
+    const hDate = new Date();
+    const hist: HistoryItem = {
+      query: queryVal,
+      date: hDate.toDateString(),
+    };
+    setHistory((prev) => [...prev, hist]);
     request<Response>(`${QUERY_URL}${queryVal}`, {
       method: "GET",
       mode: "cors",
@@ -43,7 +57,7 @@ function Search() {
             id: item.objectID,
             author: item.author,
             points: item.points,
-            story_text: item.story_text,
+            storyText: item.story_text,
             title: item.title,
             url: item.url,
             date: date.toDateString(),
@@ -64,7 +78,8 @@ function Search() {
         type="text"
         maxLength={100}
         value={queryVal}
-        className="h-12 w-1/4 rounded-md text-black text-2xl"
+        placeholder="Search..."
+        className="h-12 w-1/4 rounded-md text-black text-2xl px-4"
         onKeyDown={onInputSubmitted}
         onChange={(e) => setQueryVal(e.target.value)}
       />
