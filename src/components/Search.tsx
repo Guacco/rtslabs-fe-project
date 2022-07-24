@@ -96,7 +96,7 @@ function Search(props: SearchProps) {
   };
 
   const nextPage = () => {
-    if (currentPage + 1 <= pagesCount) {
+    if (currentPage + 1 <= pagesCount - 1) {
       setCurrentPage((prev) => {
         getHNResults(prev + 1);
         return prev + 1;
