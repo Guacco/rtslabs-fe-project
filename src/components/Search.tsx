@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
+import SearchResults from "./SearchResults";
+import { Hit } from "../interfaces/SearchInterfaces";
 
 function Search() {
   type Response = {
     hits: [];
-  };
-  type Hit = {
-    id: number;
-    author: string;
-    points: number;
-    story_text: string;
-    title: string;
-    url: string;
   };
 
   const QUERY_URL = "https://hn.algolia.com/api/v1/search?tags=story&query=";
@@ -42,9 +36,9 @@ function Search() {
       mode: "cors",
     })
       .then((response) => {
-        console.log(response);
         setIsLoading(false);
         response.hits.forEach((item: any) => {
+          const date = new Date(item.created_at);
           let ci: Hit = {
             id: item.objectID,
             author: item.author,
@@ -52,6 +46,7 @@ function Search() {
             story_text: item.story_text,
             title: item.title,
             url: item.url,
+            date: date.toDateString(),
           };
           setResults((prev) => [...prev, ci]);
         });
@@ -85,13 +80,7 @@ function Search() {
           come back later&quot;
         </span>
       ) : null}
-      <ul>
-        {results.length > 0
-          ? results.map((item) => {
-              return <li key={item.id}>{item.title}</li>;
-            })
-          : null}
-      </ul>
+      {results.length > 0 ? <SearchResults results={results} /> : null}
     </div>
   );
 }

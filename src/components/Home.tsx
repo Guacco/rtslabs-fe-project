@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function Home() {
   return (
-    <div className="bg-orange-500 h-screen text-white">
+    <div className="bg-gradient-to-r from-orange-700 via-orange-600 to-orange-500 h-screen text-orange-100 overflow-y-auto">
       <Nav />
       <Routes>
         <Route index element={<Search />} />
