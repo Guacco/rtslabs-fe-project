@@ -2,7 +2,7 @@ export type Hit = {
   id: number;
   author: string;
   points: number;
-  story_text: string;
+  storyText: string;
   title: string;
   url: string;
   date: string;

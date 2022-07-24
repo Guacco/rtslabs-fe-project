@@ -8,7 +8,7 @@ interface SearchResultsProps {
 
 function SearchResults(props: SearchResultsProps) {
   return (
-    <div className="px-24 py-14">
+    <div className="w-3/4">
       <ul className="flex flex-col gap-y-8 items-left justify-center">
         {props.results.map((result) => {
           return <SearchResult key={result.id} result={result} />;
