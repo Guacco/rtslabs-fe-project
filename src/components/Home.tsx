@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Search from "./Search";
 import History from "./History";
 import Nav from "./Nav";
+import BackendExercises from "./BackendPage";
 import { Routes, Route } from "react-router-dom";
 import { Hit } from "../interfaces/SearchInterfaces";
 import { HistoryItem } from "../interfaces/HistoryInterfaces";
@@ -25,6 +26,7 @@ function Home() {
           }
         />
         <Route path="/history" element={<History history={history} />} />
+        <Route path="/backend-exercises" element={<BackendExercises />} />
       </Routes>
     </div>
   );

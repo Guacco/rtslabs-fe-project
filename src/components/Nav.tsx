@@ -12,6 +12,9 @@ function Nav() {
         <li>
           <Link to="/history">History</Link>
         </li>
+        <li>
+          <Link to="/backend-exercises">Backend Exercises</Link>
+        </li>
       </ul>
     </nav>
   );
