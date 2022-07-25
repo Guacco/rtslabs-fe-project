@@ -30,9 +30,9 @@ class Backend {
       let newIndex = i + rotation;
 
       if (newIndex > value.length - 1) {
-        newIndex = newIndex - value.length;
+        //This works for big numbers
+        newIndex = newIndex % value.length;
       }
-      console.log(`new index ${newIndex}`, value[i]);
       rotated[newIndex] = value[i];
     }
 
